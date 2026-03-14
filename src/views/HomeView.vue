@@ -12,12 +12,11 @@ import { RouterLink } from 'vue-router'
         class="mb-4 text-4xl font-bold text-gray-900 dark:text-white md:text-6xl"
       >
         Hi, I'm Dakota
-        This is my website
       </h1>
       <p
         class="mb-8 max-w-2xl text-lg text-gray-600 dark:text-gray-300 md:text-xl"
       >
-        Welcome to my portfolio. I'm learning to code and building cool things
+        Welcome to my website. I'm learning to code and building cool things
         along the way.
       </p>
       <div class="flex gap-4">
