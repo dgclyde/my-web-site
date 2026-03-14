@@ -1,0 +1,21 @@
+@import 'tailwindcss';
+
+/* Enable class-based dark mode for Tailwind v4 */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Custom CSS Variables for theming */
+:root {
+  --color-primary: #3b82f6;
+  --color-primary-dark: #2563eb;
+}
+
+/* Base styles */
+body {
+  @apply antialiased;
+}
+
+/* Smooth transitions for interactive elements */
+a,
+button {
+  @apply transition-colors duration-200;
+}
