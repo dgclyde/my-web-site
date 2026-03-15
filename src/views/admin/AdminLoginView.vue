@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuth } from '@/composables/useAuth'
-import { ADMIN_EMAILS } from '@/lib/constants'
+import { isAdminEmail } from '@/lib/constants'
 
 const router = useRouter()
 const route = useRoute()
@@ -15,7 +15,7 @@ const errorMessage = ref('')
 
 // Redirect if already authenticated
 onMounted(() => {
-  if (user.value && ADMIN_EMAILS.includes(user.value.email ?? '')) {
+  if (user.value && isAdminEmail(user.value.email)) {
     const redirect = (route.query.redirect as string) || '/admin/messages'
     router.push(redirect)
   }
@@ -25,7 +25,7 @@ async function handleSubmit() {
   errorMessage.value = ''
 
   // Check if email is in allowed admin list
-  if (!ADMIN_EMAILS.includes(email.value.toLowerCase())) {
+  if (!isAdminEmail(email.value.toLowerCase())) {
     errorMessage.value = 'This email is not authorized for admin access.'
     return
   }
