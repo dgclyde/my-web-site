@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useContactSubmissions } from '@/composables/useContactSubmissions'
+
+const { submitContactForm } = useContactSubmissions()
 
 const form = ref({
   name: '',
@@ -15,18 +18,20 @@ async function handleSubmit() {
   isSubmitting.value = true
   submitError.value = ''
 
-  try {
-    // TODO: Implement form submission with Supabase
-    // For now, just simulate a submission
-    await new Promise((resolve) => setTimeout(resolve, 1000))
+  const { success, error } = await submitContactForm({
+    name: form.value.name,
+    email: form.value.email,
+    message: form.value.message,
+  })
 
+  if (success) {
     submitSuccess.value = true
     form.value = { name: '', email: '', message: '' }
-  } catch {
-    submitError.value = 'Failed to send message. Please try again.'
-  } finally {
-    isSubmitting.value = false
+  } else {
+    submitError.value = error ?? 'Failed to send message. Please try again.'
   }
+
+  isSubmitting.value = false
 }
 </script>
 

@@ -1,5 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import type { RouteRecordRaw } from 'vue-router'
+import { supabase } from '@/lib/supabaseClient'
+import { isAdminEmail } from '@/lib/constants'
 
 const routes: RouteRecordRaw[] = [
   {
@@ -22,6 +24,22 @@ const routes: RouteRecordRaw[] = [
     name: 'contact',
     component: () => import('@/views/ContactView.vue'),
   },
+  // Admin routes (hidden from navigation)
+  {
+    path: '/admin',
+    redirect: '/admin/messages',
+  },
+  {
+    path: '/admin/login',
+    name: 'admin-login',
+    component: () => import('@/views/admin/AdminLoginView.vue'),
+  },
+  {
+    path: '/admin/messages',
+    name: 'admin-messages',
+    component: () => import('@/views/admin/AdminMessagesView.vue'),
+    meta: { requiresAuth: true, requiresAdmin: true },
+  },
   // Catch-all 404 route
   {
     path: '/:pathMatch(.*)*',
@@ -41,15 +59,32 @@ const router = createRouter({
   },
 })
 
-// Example navigation guard for protected routes (uncomment when auth is needed)
-// router.beforeEach(async (to, _from, next) => {
-//   const { data: { session } } = await supabase.auth.getSession()
-//
-//   if (to.meta.requiresAuth && !session) {
-//     next({ name: 'login', query: { redirect: to.fullPath } })
-//   } else {
-//     next()
-//   }
-// })
+// Navigation guard for protected routes
+router.beforeEach(async (to, _from, next) => {
+  // Check if route requires authentication
+  if (to.meta.requiresAuth) {
+    const {
+      data: { session },
+    } = await supabase.auth.getSession()
+
+    if (!session) {
+      // Not authenticated, redirect to login
+      next({ name: 'admin-login', query: { redirect: to.fullPath } })
+      return
+    }
+
+    // Check if route requires admin access
+    if (to.meta.requiresAdmin) {
+      const userEmail = session.user?.email
+      if (!isAdminEmail(userEmail)) {
+        // Authenticated but not an admin
+        next({ name: 'not-found' })
+        return
+      }
+    }
+  }
+
+  next()
+})
 
 export default router
