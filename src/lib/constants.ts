@@ -5,7 +5,10 @@
 /**
  * Email addresses allowed to access the admin panel
  */
-export const ADMIN_EMAILS: string[] = ['dakota@mjclyde', 'me@mjclyde.com']
+export const ADMIN_EMAILS: string[] = [
+  'dakota@mjclyde',
+  'matt.clyde37@gmail.com',
+]
 
 /**
  * Check if an email is an admin
